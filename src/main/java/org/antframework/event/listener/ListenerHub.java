@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 监听器中心
  */
 public class ListenerHub {
-    // 监听器执行器Map（key：监听器的类型）
-    private final Map<Class<? extends ListenerType>, Set<ListenerExecutor>> listenerExecutorMap = new ConcurrentHashMap<>();
+    // 监听器类型-监听器执行器集合Map
+    private final Map<Class<? extends ListenerType>, Set<ListenerExecutor>> listenerTypeListenerExecutorses = new ConcurrentHashMap<>();
 
     /**
      * 新增监听器
@@ -29,7 +29,7 @@ public class ListenerHub {
      * @param listenerExecutor 监听器执行器
      */
     public void addListener(ListenerExecutor listenerExecutor) {
-        listenerExecutorMap.compute(listenerExecutor.getType(), (type, listenerExecutors) -> {
+        listenerTypeListenerExecutorses.compute(listenerExecutor.getType(), (type, listenerExecutors) -> {
             if (listenerExecutors == null) {
                 listenerExecutors = new HashSet<>();
             }
@@ -39,12 +39,12 @@ public class ListenerHub {
     }
 
     /**
-     * 获取所有的监听器类型
+     * 获取所有监听器类型
      *
-     * @return 所有的监听器类型
+     * @return 所有监听器类型
      */
     public Set<Class<? extends ListenerType>> getTypes() {
-        return Collections.unmodifiableSet(listenerExecutorMap.keySet());
+        return Collections.unmodifiableSet(new HashSet<>(listenerTypeListenerExecutorses.keySet()));
     }
 
     /**
@@ -54,10 +54,11 @@ public class ListenerHub {
      * @return 指定类型的所有监听器
      */
     public Set<ListenerExecutor> getListeners(Class<? extends ListenerType> type) {
-        Set<ListenerExecutor> listenerExecutors = listenerExecutorMap.get(type);
-        if (listenerExecutors == null) {
-            listenerExecutors = new HashSet<>();
-        }
+        Set<ListenerExecutor> listenerExecutors = new HashSet<>();
+        listenerTypeListenerExecutorses.computeIfPresent(type, (k, v) -> {
+            listenerExecutors.addAll(v);
+            return v;
+        });
         return Collections.unmodifiableSet(listenerExecutors);
     }
 }
