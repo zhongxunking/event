@@ -16,6 +16,7 @@ import org.antframework.event.extension.ListenerType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -36,8 +37,8 @@ public class ListenerExecutor {
     private final Object listener;
     // 事件类型解决器
     private final EventTypeResolver resolver;
-    // 监听执行器map（key：被监听的事件类型）
-    private final Map<Object, ListenExecutor> listenExecutorMap;
+    // 事件类型-监听执行器map
+    private final Map<Object, ListenExecutor> eventTypeListenExecutors;
 
     /**
      * 执行监听事件
@@ -46,7 +47,7 @@ public class ListenerExecutor {
      * @throws Throwable 执行过程中发生任何异常都会往外抛
      */
     public void execute(Object event) throws Throwable {
-        ListenExecutor listenExecutor = listenExecutorMap.get(resolver.resolve(event));
+        ListenExecutor listenExecutor = eventTypeListenExecutors.get(resolver.resolve(event));
         if (listenExecutor != null) {
             listenExecutor.execute(listener, event);
         }
@@ -59,12 +60,12 @@ public class ListenerExecutor {
      */
     public Set<Object> getEventTypes(PriorityType priorityType) {
         Set<Object> eventTypes = new HashSet<>();
-        listenExecutorMap.forEach((eventType, listenExecutor) -> {
+        eventTypeListenExecutors.forEach((eventType, listenExecutor) -> {
             if (listenExecutor.getPriorityType() == priorityType) {
                 eventTypes.add(eventType);
             }
         });
-        return eventTypes;
+        return Collections.unmodifiableSet(eventTypes);
     }
 
     /**
