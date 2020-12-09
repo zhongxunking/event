@@ -44,9 +44,9 @@ public final class ListenerParser {
         Listener listenerAnnotation = AnnotatedElementUtils.findMergedAnnotation(listenerClass, Listener.class);
         // 解析
         EventTypeResolver resolver = parseToEventTypeResolver(listenerAnnotation.type());
-        Map<Object, ListenExecutor> listenExecutorMap = parseToListenExecutors(listenerClass);
+        Map<Object, ListenExecutor> eventTypeListenExecutors = parseListens(listenerClass);
 
-        return new ListenerExecutor(listenerAnnotation.type(), listenerAnnotation.priority(), listener, resolver, listenExecutorMap);
+        return new ListenerExecutor(listenerAnnotation.type(), listenerAnnotation.priority(), listener, resolver, eventTypeListenExecutors);
     }
 
     /**
@@ -59,20 +59,20 @@ public final class ListenerParser {
         return listenerType.getResolver();
     }
 
-    // 解析出所有监听方法
-    private static Map<Object, ListenExecutor> parseToListenExecutors(Class<?> listenerClass) {
-        Map<Object, ListenExecutor> map = new HashMap<>();
+    // 解析所有监听方法
+    private static Map<Object, ListenExecutor> parseListens(Class<?> listenerClass) {
+        Map<Object, ListenExecutor> eventTypeListenExecutors = new HashMap<>();
         // 解析
         ReflectionUtils.doWithLocalMethods(listenerClass, method -> {
             Listen listenAnnotation = AnnotatedElementUtils.findMergedAnnotation(method, Listen.class);
             if (listenAnnotation != null) {
                 ListenExecutor listenExecutor = parseListen(listenAnnotation, method);
-                Assert.isTrue(!map.containsKey(listenExecutor.getEventType()), String.format("监听器[%s]存在监听同一个事件类型[%s]的多个方法", listenerClass, listenExecutor.getEventType()));
-                map.put(listenExecutor.getEventType(), listenExecutor);
+                Assert.isTrue(!eventTypeListenExecutors.containsKey(listenExecutor.getEventType()), String.format("监听器[%s]存在监听同一个事件类型[%s]的多个方法", listenerClass, listenExecutor.getEventType()));
+                eventTypeListenExecutors.put(listenExecutor.getEventType(), listenExecutor);
             }
         });
 
-        return map;
+        return eventTypeListenExecutors;
     }
 
     // 解析监听方法
