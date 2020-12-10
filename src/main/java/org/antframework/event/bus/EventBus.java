@@ -8,10 +8,13 @@
  */
 package org.antframework.event.bus;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.antframework.event.extension.EventTypeResolver;
+import org.antframework.event.extension.ListenerType;
 import org.antframework.event.listener.ListenerExecutor;
+import org.antframework.event.listener.ListenerParser;
 import org.antframework.event.listener.PriorityType;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -20,22 +23,13 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 public class EventBus {
-    // 事件类型解决器
-    private final EventTypeResolver eventTypeResolver;
+    // 监听器类型
+    @Getter
+    private final Class<? extends ListenerType> listenerType;
     // 所有监听器执行器
     private final Set<ListenerExecutor> listenerExecutors = new HashSet<>();
     // 分发器
     private Dispatcher dispatcher = new Dispatcher();
-
-    /**
-     * 分发事件
-     *
-     * @param event 事件
-     * @throws Throwable 执行过程中发生任何异常都会往外抛
-     */
-    public void dispatch(Object event) throws Throwable {
-        dispatcher.dispatch(event);
-    }
 
     /**
      * 添加监听器执行器
@@ -43,6 +37,7 @@ public class EventBus {
      * @param listenerExecutor 监听器执行器
      */
     public synchronized void addListenerExecutor(ListenerExecutor listenerExecutor) {
+        Assert.isTrue(listenerExecutor.getType() == listenerType, String.format("监听器类型[%s]与事件总线接受类型[%s]不匹配", listenerExecutor.getType(), listenerType));
         if (!listenerExecutors.contains(listenerExecutor)) {
             listenerExecutors.add(listenerExecutor);
             dispatcher = dispatcher.addExecutor(listenerExecutor);
@@ -55,10 +50,20 @@ public class EventBus {
      * @param listenerExecutor 监听器
      */
     public synchronized void removeListenerExecutor(ListenerExecutor listenerExecutor) {
-        if (listenerExecutors.contains(listenerExecutor)) {
+        if (listenerExecutor.getType() == listenerType && listenerExecutors.contains(listenerExecutor)) {
             listenerExecutors.remove(listenerExecutor);
             dispatcher = dispatcher.removeExecutor(listenerExecutor);
         }
+    }
+
+    /**
+     * 分发事件
+     *
+     * @param event 事件
+     * @throws Throwable 执行过程中发生任何异常都会往外抛
+     */
+    public void dispatch(Object event) throws Throwable {
+        dispatcher.dispatch(event);
     }
 
     // 分发器
@@ -70,7 +75,7 @@ public class EventBus {
 
         // 分发事件
         void dispatch(Object event) throws Throwable {
-            Object eventType = eventTypeResolver.resolve(event);
+            Object eventType = ListenerParser.getEventTypeResolver(listenerType).resolve(event);
             // 向升序队列分发事件
             doDispatch(asc.get(eventType), event);
             // 向降序队列分发事件

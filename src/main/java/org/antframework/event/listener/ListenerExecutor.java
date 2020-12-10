@@ -10,7 +10,6 @@ package org.antframework.event.listener;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.antframework.event.extension.EventTypeResolver;
 import org.antframework.event.extension.ListenResolver;
 import org.antframework.event.extension.ListenerType;
 
@@ -35,8 +34,6 @@ public class ListenerExecutor {
     // 监听器
     @Getter
     private final Object listener;
-    // 事件类型解决器
-    private final EventTypeResolver resolver;
     // 事件类型-监听执行器map
     private final Map<Object, ListenExecutor> eventTypeListenExecutors;
 
@@ -47,7 +44,8 @@ public class ListenerExecutor {
      * @throws Throwable 执行过程中发生任何异常都会往外抛
      */
     public void execute(Object event) throws Throwable {
-        ListenExecutor listenExecutor = eventTypeListenExecutors.get(resolver.resolve(event));
+        Object eventType = ListenerParser.getEventTypeResolver(type).resolve(event);
+        ListenExecutor listenExecutor = eventTypeListenExecutors.get(eventType);
         if (listenExecutor != null) {
             listenExecutor.execute(listener, event);
         }

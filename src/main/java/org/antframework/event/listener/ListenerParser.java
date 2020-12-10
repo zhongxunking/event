@@ -25,12 +25,16 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 监听器解析器
  */
 @Slf4j
 public final class ListenerParser {
+    // 监听器类型-事件类型解决器map
+    private static final Map<Class<? extends ListenerType>, EventTypeResolver> listenerTypeEventTypeResolvers = new ConcurrentHashMap<>();
+
     /**
      * 解析监听器
      *
@@ -43,10 +47,9 @@ public final class ListenerParser {
         log.debug("解析监听器：{}", listenerClass);
         Listener listenerAnnotation = AnnotatedElementUtils.findMergedAnnotation(listenerClass, Listener.class);
         // 解析
-        EventTypeResolver resolver = getEventTypeResolver(listenerAnnotation.type());
         Map<Object, ListenExecutor> eventTypeListenExecutors = parseListens(listenerClass);
 
-        return new ListenerExecutor(listenerAnnotation.type(), listenerAnnotation.priority(), listener, resolver, eventTypeListenExecutors);
+        return new ListenerExecutor(listenerAnnotation.type(), listenerAnnotation.priority(), listener, eventTypeListenExecutors);
     }
 
     /**
@@ -56,8 +59,14 @@ public final class ListenerParser {
      * @return 事件类型解决器
      */
     public static EventTypeResolver getEventTypeResolver(Class<? extends ListenerType> type) {
-        ListenerType listenerType = BeanUtils.instantiate(type);
-        return listenerType.getResolver();
+        EventTypeResolver resolver = listenerTypeEventTypeResolvers.get(type);
+        if (resolver == null) {
+            resolver = listenerTypeEventTypeResolvers.computeIfAbsent(type, k -> {
+                ListenerType listenerType = BeanUtils.instantiate(k);
+                return listenerType.getResolver();
+            });
+        }
+        return resolver;
     }
 
     // 解析所有监听方法
