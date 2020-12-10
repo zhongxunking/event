@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 监听器中心
  */
 public class ListenerHub {
-    // 监听器类型-监听器执行器集合Map
+    // 监听器类型-监听器执行器集合map
     private final Map<Class<? extends ListenerType>, Set<ListenerExecutor>> listenerTypeListenerExecutorses = new ConcurrentHashMap<>();
 
     /**
