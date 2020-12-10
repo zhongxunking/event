@@ -43,18 +43,19 @@ public final class ListenerParser {
         log.debug("解析监听器：{}", listenerClass);
         Listener listenerAnnotation = AnnotatedElementUtils.findMergedAnnotation(listenerClass, Listener.class);
         // 解析
-        EventTypeResolver resolver = parseToEventTypeResolver(listenerAnnotation.type());
+        EventTypeResolver resolver = getEventTypeResolver(listenerAnnotation.type());
         Map<Object, ListenExecutor> eventTypeListenExecutors = parseListens(listenerClass);
 
         return new ListenerExecutor(listenerAnnotation.type(), listenerAnnotation.priority(), listener, resolver, eventTypeListenExecutors);
     }
 
     /**
-     * 解析出事件类型解决器
+     * 获取事件类型解决器
      *
      * @param type 监听器类型
+     * @return 事件类型解决器
      */
-    public static EventTypeResolver parseToEventTypeResolver(Class<? extends ListenerType> type) {
+    public static EventTypeResolver getEventTypeResolver(Class<? extends ListenerType> type) {
         ListenerType listenerType = BeanUtils.instantiate(type);
         return listenerType.getResolver();
     }

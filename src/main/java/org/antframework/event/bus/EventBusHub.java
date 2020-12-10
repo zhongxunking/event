@@ -39,6 +39,6 @@ public class EventBusHub {
      * @return 事件总线
      */
     public EventBus getEventBus(Class<? extends ListenerType> type) {
-        return eventBusMap.computeIfAbsent(type, k -> new EventBus(ListenerParser.parseToEventTypeResolver(k)));
+        return eventBusMap.computeIfAbsent(type, k -> new EventBus(ListenerParser.getEventTypeResolver(k)));
     }
 }
