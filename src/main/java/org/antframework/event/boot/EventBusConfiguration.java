@@ -31,7 +31,7 @@ import org.springframework.core.annotation.Order;
 @Configuration
 @Import({EventBusHub.class,
         ListenerHub.class,
-        EventBusConfiguration.AnnotationListenerScanner.class,
+        EventBusConfiguration.ListenerScanner.class,
         EventBusConfiguration.EventBusInitializer.class})
 public class EventBusConfiguration {
     /**
@@ -46,18 +46,25 @@ public class EventBusConfiguration {
     }
 
     /**
-     * 注解监听器扫描器
+     * 监听器扫描器
      */
     @Order(ORDER)
     @AllArgsConstructor
-    public static class AnnotationListenerScanner implements ApplicationListener<ContextRefreshedEvent> {
+    public static class ListenerScanner implements ApplicationListener<ContextRefreshedEvent> {
         // 监听器中心
         private final ListenerHub listenerHub;
 
         @Override
         public void onApplicationEvent(ContextRefreshedEvent event) {
-            // 扫描
-            String[] beanNames = event.getApplicationContext().getBeanNamesForAnnotation(org.antframework.event.annotation.listener.Listener.class);
+            // 扫描Listener
+            String[] beanNames = event.getApplicationContext().getBeanNamesForType(Listener.class);
+            for (String beanName : beanNames) {
+                Listener bean = event.getApplicationContext().getBean(beanName, Listener.class);
+                // 注册
+                listenerHub.addListener(bean);
+            }
+            // 扫描@Listener
+            beanNames = event.getApplicationContext().getBeanNamesForAnnotation(org.antframework.event.annotation.listener.Listener.class);
             for (String beanName : beanNames) {
                 Object bean = event.getApplicationContext().getBean(beanName);
                 // 解析
