@@ -8,7 +8,7 @@
  */
 package org.antframework.event.bus;
 
-import org.antframework.event.extension.ListenerType;
+import org.antframework.event.listener.ListenerType;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,6 +39,6 @@ public class EventBusHub {
      * @return 事件总线
      */
     public EventBus getEventBus(Class<? extends ListenerType> type) {
-        return listenerTypeEventBuses.computeIfAbsent(type, EventBus::new);
+        return listenerTypeEventBuses.computeIfAbsent(type, DefaultEventBus::new);
     }
 }

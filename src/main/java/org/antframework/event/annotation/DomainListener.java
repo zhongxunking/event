@@ -9,7 +9,7 @@
 package org.antframework.event.annotation;
 
 import org.antframework.event.annotation.listener.Listener;
-import org.antframework.event.extension.support.DomainListenerType;
+import org.antframework.event.annotation.support.DomainListenerType;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;

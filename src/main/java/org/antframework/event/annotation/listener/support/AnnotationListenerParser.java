@@ -6,15 +6,13 @@
  * 修订记录:
  * @author 钟勋 2016-12-16 01:14 创建
  */
-package org.antframework.event.listener;
+package org.antframework.event.annotation.listener.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.antframework.event.annotation.listener.Listen;
-import org.antframework.event.annotation.listener.Listener;
-import org.antframework.event.extension.EventTypeResolver;
-import org.antframework.event.extension.ListenResolver;
-import org.antframework.event.extension.ListenerType;
-import org.antframework.event.listener.ListenerExecutor.ListenExecutor;
+import org.antframework.event.annotation.listener.ListenResolver;
+import org.antframework.event.annotation.listener.support.AnnotationListener.ListenExecutor;
+import org.antframework.event.listener.Listener;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -25,48 +23,27 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 监听器解析器
+ * 注解监听器解析器
  */
 @Slf4j
-public final class ListenerParser {
-    // 监听器类型-事件类型解决器map
-    private static final Map<Class<? extends ListenerType>, EventTypeResolver> listenerTypeEventTypeResolvers = new ConcurrentHashMap<>();
-
+public final class AnnotationListenerParser {
     /**
      * 解析监听器
      *
      * @param listener 监听器
-     * @return 监听器执行器
+     * @return 监听器
      */
-    public static ListenerExecutor parseListener(Object listener) {
+    public static Listener parseListener(Object listener) {
         // 获取目标class（应对AOP代理情况）
         Class<?> listenerClass = AopUtils.getTargetClass(listener);
         log.debug("解析监听器：{}", listenerClass);
-        Listener listenerAnnotation = AnnotatedElementUtils.findMergedAnnotation(listenerClass, Listener.class);
+        org.antframework.event.annotation.listener.Listener listenerAnnotation = AnnotatedElementUtils.findMergedAnnotation(listenerClass, org.antframework.event.annotation.listener.Listener.class);
         // 解析
         Map<Object, ListenExecutor> eventTypeListenExecutors = parseListens(listenerClass);
 
-        return new ListenerExecutor(listenerAnnotation.type(), listenerAnnotation.priority(), listener, eventTypeListenExecutors);
-    }
-
-    /**
-     * 获取事件类型解决器
-     *
-     * @param type 监听器类型
-     * @return 事件类型解决器
-     */
-    public static EventTypeResolver getEventTypeResolver(Class<? extends ListenerType> type) {
-        EventTypeResolver resolver = listenerTypeEventTypeResolvers.get(type);
-        if (resolver == null) {
-            resolver = listenerTypeEventTypeResolvers.computeIfAbsent(type, k -> {
-                ListenerType listenerType = BeanUtils.instantiate(k);
-                return listenerType.getResolver();
-            });
-        }
-        return resolver;
+        return new AnnotationListener(listenerAnnotation.type(), listenerAnnotation.priority(), listener, eventTypeListenExecutors);
     }
 
     // 解析所有监听方法

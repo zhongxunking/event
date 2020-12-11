@@ -8,8 +8,6 @@
  */
 package org.antframework.event.listener;
 
-import org.antframework.event.extension.ListenerType;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,21 +18,21 @@ import java.util.concurrent.ConcurrentHashMap;
  * 监听器中心
  */
 public class ListenerHub {
-    // 监听器类型-监听器执行器集合map
-    private final Map<Class<? extends ListenerType>, Set<ListenerExecutor>> listenerTypeListenerExecutorses = new ConcurrentHashMap<>();
+    // 类型-监听器集合map
+    private final Map<Class<? extends ListenerType>, Set<Listener>> typeListenerses = new ConcurrentHashMap<>();
 
     /**
      * 新增监听器
      *
-     * @param listenerExecutor 监听器执行器
+     * @param listener 监听器
      */
-    public void addListener(ListenerExecutor listenerExecutor) {
-        listenerTypeListenerExecutorses.compute(listenerExecutor.getType(), (type, listenerExecutors) -> {
-            if (listenerExecutors == null) {
-                listenerExecutors = new HashSet<>();
+    public void addListener(Listener listener) {
+        typeListenerses.compute(listener.getType(), (type, listeners) -> {
+            if (listeners == null) {
+                listeners = new HashSet<>();
             }
-            listenerExecutors.add(listenerExecutor);
-            return listenerExecutors;
+            listeners.add(listener);
+            return listeners;
         });
     }
 
@@ -44,7 +42,7 @@ public class ListenerHub {
      * @return 所有监听器类型
      */
     public Set<Class<? extends ListenerType>> getTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(listenerTypeListenerExecutorses.keySet()));
+        return Collections.unmodifiableSet(new HashSet<>(typeListenerses.keySet()));
     }
 
     /**
@@ -53,12 +51,12 @@ public class ListenerHub {
      * @param type 类型
      * @return 指定类型的所有监听器
      */
-    public Set<ListenerExecutor> getListeners(Class<? extends ListenerType> type) {
-        Set<ListenerExecutor> listenerExecutors = new HashSet<>();
-        listenerTypeListenerExecutorses.computeIfPresent(type, (k, v) -> {
-            listenerExecutors.addAll(v);
+    public Set<Listener> getListeners(Class<? extends ListenerType> type) {
+        Set<Listener> listeners = new HashSet<>();
+        typeListenerses.computeIfPresent(type, (k, v) -> {
+            listeners.addAll(v);
             return v;
         });
-        return Collections.unmodifiableSet(listenerExecutors);
+        return Collections.unmodifiableSet(listeners);
     }
 }

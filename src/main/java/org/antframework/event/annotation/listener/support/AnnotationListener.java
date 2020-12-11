@@ -6,12 +6,15 @@
  * 修订记录:
  * @author 钟勋 2016-12-16 01:14 创建
  */
-package org.antframework.event.listener;
+package org.antframework.event.annotation.listener.support;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.antframework.event.extension.ListenResolver;
-import org.antframework.event.extension.ListenerType;
+import org.antframework.event.annotation.listener.ListenResolver;
+import org.antframework.event.listener.Listener;
+import org.antframework.event.listener.ListenerType;
+import org.antframework.event.listener.ListenerTypes;
+import org.antframework.event.listener.PriorityType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,41 +24,30 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 监听器执行器
+ * 注解监听器
  */
 @AllArgsConstructor
-public class ListenerExecutor {
+public class AnnotationListener implements Listener {
     // 监听器类型
-    @Getter
     private final Class<? extends ListenerType> type;
     // 优先级
-    @Getter
     private final int priority;
     // 监听器
-    @Getter
     private final Object listener;
     // 事件类型-监听执行器map
     private final Map<Object, ListenExecutor> eventTypeListenExecutors;
 
-    /**
-     * 执行监听事件
-     *
-     * @param event 事件
-     * @throws Throwable 执行过程中发生任何异常都会往外抛
-     */
-    public void execute(Object event) throws Throwable {
-        Object eventType = ListenerParser.getEventTypeResolver(type).resolve(event);
-        ListenExecutor listenExecutor = eventTypeListenExecutors.get(eventType);
-        if (listenExecutor != null) {
-            listenExecutor.execute(listener, event);
-        }
+    @Override
+    public Class<? extends ListenerType> getType() {
+        return type;
     }
 
-    /**
-     * 获取指定优先级顺序的监听事件类型
-     *
-     * @param priorityType 优先级类型
-     */
+    @Override
+    public int getPriority() {
+        return priority;
+    }
+
+    @Override
     public Set<Object> getEventTypes(PriorityType priorityType) {
         Set<Object> eventTypes = new HashSet<>();
         eventTypeListenExecutors.forEach((eventType, listenExecutor) -> {
@@ -64,6 +56,15 @@ public class ListenerExecutor {
             }
         });
         return Collections.unmodifiableSet(eventTypes);
+    }
+
+    @Override
+    public void execute(Object event) throws Throwable {
+        Object eventType = ListenerTypes.getEventTypeResolver(type).resolve(event);
+        ListenExecutor listenExecutor = eventTypeListenExecutors.get(eventType);
+        if (listenExecutor != null) {
+            listenExecutor.execute(listener, event);
+        }
     }
 
     /**

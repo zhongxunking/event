@@ -6,7 +6,7 @@
  * 修订记录:
  * @author 钟勋 2017-09-29 11:35 创建
  */
-package org.antframework.event.extension;
+package org.antframework.event.annotation.listener;
 
 import java.lang.reflect.Method;
 

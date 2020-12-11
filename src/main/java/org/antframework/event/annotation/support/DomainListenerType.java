@@ -6,10 +6,9 @@
  * 修订记录:
  * @author 钟勋 2017-09-29 12:41 创建
  */
-package org.antframework.event.extension.support;
+package org.antframework.event.annotation.support;
 
-import org.antframework.event.extension.EventTypeResolver;
-import org.antframework.event.extension.ListenerType;
+import org.antframework.event.listener.ListenerType;
 
 /**
  * 领域监听器类型

@@ -8,7 +8,7 @@
  */
 package org.antframework.event.annotation.listener;
 
-import org.antframework.event.extension.ListenerType;
+import org.antframework.event.listener.ListenerType;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
