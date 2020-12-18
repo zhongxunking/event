@@ -11,9 +11,9 @@ package org.antframework.event.annotation.listener.support;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.antframework.event.annotation.listener.ListenResolver;
+import org.antframework.event.listener.DataType;
+import org.antframework.event.listener.DataTypes;
 import org.antframework.event.listener.Listener;
-import org.antframework.event.listener.ListenerType;
-import org.antframework.event.listener.ListenerTypes;
 import org.antframework.event.listener.PriorityType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -28,8 +28,8 @@ import java.util.Set;
  */
 @AllArgsConstructor
 public class AnnotationListener implements Listener {
-    // 监听器类型
-    private final Class<? extends ListenerType> type;
+    // 数据类型
+    private final Class<? extends DataType> dataType;
     // 优先级
     private final int priority;
     // 监听器
@@ -38,8 +38,8 @@ public class AnnotationListener implements Listener {
     private final Map<Object, ListenExecutor> eventTypeListenExecutors;
 
     @Override
-    public Class<? extends ListenerType> getType() {
-        return type;
+    public Class<? extends DataType> getDataType() {
+        return dataType;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class AnnotationListener implements Listener {
 
     @Override
     public void execute(Object event) throws Throwable {
-        Object eventType = ListenerTypes.getEventTypeResolver(type).resolve(event);
+        Object eventType = DataTypes.getEventTypeResolver(dataType).resolve(event);
         ListenExecutor listenExecutor = eventTypeListenExecutors.get(eventType);
         if (listenExecutor != null) {
             listenExecutor.execute(listener, event);

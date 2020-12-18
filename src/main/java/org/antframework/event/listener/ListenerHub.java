@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 监听器中心
  */
 public class ListenerHub {
-    // 类型-监听器集合map
-    private final Map<Class<? extends ListenerType>, Set<Listener>> typeListenerses = new ConcurrentHashMap<>();
+    // 数据类型-监听器集合map
+    private final Map<Class<? extends DataType>, Set<Listener>> dataTypeListenerses = new ConcurrentHashMap<>();
 
     /**
      * 新增监听器
@@ -27,7 +27,7 @@ public class ListenerHub {
      * @param listener 监听器
      */
     public void addListener(Listener listener) {
-        typeListenerses.compute(listener.getType(), (type, listeners) -> {
+        dataTypeListenerses.compute(listener.getDataType(), (dataType, listeners) -> {
             if (listeners == null) {
                 listeners = new HashSet<>();
             }
@@ -37,23 +37,23 @@ public class ListenerHub {
     }
 
     /**
-     * 获取所有监听器类型
+     * 获取所有数据类型
      *
-     * @return 所有监听器类型
+     * @return 所有数据类型
      */
-    public Set<Class<? extends ListenerType>> getTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(typeListenerses.keySet()));
+    public Set<Class<? extends DataType>> getDataTypes() {
+        return Collections.unmodifiableSet(new HashSet<>(dataTypeListenerses.keySet()));
     }
 
     /**
-     * 获取指定类型的所有监听器
+     * 获取指定数据类型的所有监听器
      *
-     * @param type 类型
-     * @return 指定类型的所有监听器
+     * @param dataType 数据类型
+     * @return 指定数据类型的所有监听器
      */
-    public Set<Listener> getListeners(Class<? extends ListenerType> type) {
+    public Set<Listener> getListeners(Class<? extends DataType> dataType) {
         Set<Listener> listeners = new HashSet<>();
-        typeListenerses.computeIfPresent(type, (k, v) -> {
+        dataTypeListenerses.computeIfPresent(dataType, (k, v) -> {
             listeners.addAll(v);
             return v;
         });

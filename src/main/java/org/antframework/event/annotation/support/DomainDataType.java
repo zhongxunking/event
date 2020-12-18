@@ -8,12 +8,12 @@
  */
 package org.antframework.event.annotation.support;
 
-import org.antframework.event.listener.ListenerType;
+import org.antframework.event.listener.DataType;
 
 /**
- * 领域监听器类型
+ * 领域数据类型
  */
-public class DomainListenerType implements ListenerType {
+public class DomainDataType implements DataType {
     @Override
     public EventTypeResolver getResolver() {
         return ClassEventTypeResolver.INSTANCE;

@@ -9,12 +9,12 @@
 package org.antframework.event.annotation.support;
 
 
-import org.antframework.event.listener.ListenerType;
+import org.antframework.event.listener.DataType;
 
 /**
  * Class事件类型解决器（事件类型就是事件对应的Class类）
  */
-public class ClassEventTypeResolver implements ListenerType.EventTypeResolver {
+public class ClassEventTypeResolver implements DataType.EventTypeResolver {
     /**
      * 实例
      */

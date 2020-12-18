@@ -11,12 +11,12 @@ package org.antframework.event.boot;
 import lombok.AllArgsConstructor;
 import org.antframework.event.EventPublisher;
 import org.antframework.event.annotation.listener.support.AnnotationListenerParser;
-import org.antframework.event.annotation.support.DomainListenerType;
+import org.antframework.event.annotation.support.DomainDataType;
 import org.antframework.event.bus.EventBus;
 import org.antframework.event.bus.EventBusHub;
+import org.antframework.event.listener.DataType;
 import org.antframework.event.listener.Listener;
 import org.antframework.event.listener.ListenerHub;
-import org.antframework.event.listener.ListenerType;
 import org.antframework.event.publisher.DefaultEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +42,7 @@ public class EventBusConfiguration {
     // 配置领域事件发布器
     @Bean(name = "org.antframework.event.EventPublisher")
     public EventPublisher eventPublisher(EventBusHub eventBusHub) {
-        return new DefaultEventPublisher(eventBusHub.getEventBus(DomainListenerType.class));
+        return new DefaultEventPublisher(eventBusHub.getEventBus(DomainDataType.class));
     }
 
     /**
@@ -88,10 +88,10 @@ public class EventBusConfiguration {
 
         @Override
         public void onApplicationEvent(ContextRefreshedEvent event) {
-            for (Class<? extends ListenerType> type : listenerHub.getTypes()) {
+            for (Class<? extends DataType> dataType : listenerHub.getDataTypes()) {
                 // 初始化事件总线
-                EventBus eventBus = eventBusHub.getEventBus(type);
-                for (Listener listener : listenerHub.getListeners(type)) {
+                EventBus eventBus = eventBusHub.getEventBus(dataType);
+                for (Listener listener : listenerHub.getListeners(dataType)) {
                     eventBus.addListener(listener);
                 }
             }

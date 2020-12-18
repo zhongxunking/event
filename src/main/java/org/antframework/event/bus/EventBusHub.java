@@ -8,7 +8,7 @@
  */
 package org.antframework.event.bus;
 
-import org.antframework.event.listener.ListenerType;
+import org.antframework.event.listener.DataType;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,25 +20,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * 事件总线中心
  */
 public class EventBusHub {
-    // 监听器类型-事件总线map
-    private final Map<Class<? extends ListenerType>, EventBus> listenerTypeEventBuses = new ConcurrentHashMap<>();
+    // 数据类型-事件总线map
+    private final Map<Class<? extends DataType>, EventBus> dataTypeEventBuses = new ConcurrentHashMap<>();
 
     /**
-     * 获取所有类型
+     * 获取所有数据类型
      *
-     * @return 所有类型
+     * @return 所有数据类型
      */
-    public Set<Class<? extends ListenerType>> getTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(listenerTypeEventBuses.keySet()));
+    public Set<Class<? extends DataType>> getDataTypes() {
+        return Collections.unmodifiableSet(new HashSet<>(dataTypeEventBuses.keySet()));
     }
 
     /**
-     * 获取事件总线（如果不存在该类型的事件总线，则新创建一个）
+     * 获取事件总线（如果不存在该数据类型的事件总线，则新创建一个）
      *
-     * @param type 总线类型
+     * @param dataType 数据类型
      * @return 事件总线
      */
-    public EventBus getEventBus(Class<? extends ListenerType> type) {
-        return listenerTypeEventBuses.computeIfAbsent(type, DefaultEventBus::new);
+    public EventBus getEventBus(Class<? extends DataType> dataType) {
+        return dataTypeEventBuses.computeIfAbsent(dataType, DefaultEventBus::new);
     }
 }

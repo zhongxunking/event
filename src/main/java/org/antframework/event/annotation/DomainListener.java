@@ -9,7 +9,7 @@
 package org.antframework.event.annotation;
 
 import org.antframework.event.annotation.listener.Listener;
-import org.antframework.event.annotation.support.DomainListenerType;
+import org.antframework.event.annotation.support.DomainDataType;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;
@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Listener(type = DomainListenerType.class, priority = Integer.MAX_VALUE)
+@Listener(dataType = DomainDataType.class, priority = Integer.MAX_VALUE)
 public @interface DomainListener {
     /**
      * 优先级

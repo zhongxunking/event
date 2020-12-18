@@ -9,9 +9,9 @@
 package org.antframework.event.listener;
 
 /**
- * 监听器类型（实现类需具有默认构造方法）
+ * 数据类型（实现类需具有默认构造方法）
  */
-public interface ListenerType {
+public interface DataType {
     /**
      * 获取事件类型解决器
      */

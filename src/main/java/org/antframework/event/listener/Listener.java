@@ -15,11 +15,11 @@ import java.util.Set;
  */
 public interface Listener {
     /**
-     * 获取类型
+     * 获取数据类型
      *
-     * @return 类型
+     * @return 数据类型
      */
-    Class<? extends ListenerType> getType();
+    Class<? extends DataType> getDataType();
 
     /**
      * 获取优先级
@@ -29,7 +29,7 @@ public interface Listener {
     int getPriority();
 
     /**
-     * 获取监听的所有事件类型
+     * 获取监听的指定优先级类型的所有事件类型
      *
      * @param priorityType 优先级类型
      * @return 所有事件类型

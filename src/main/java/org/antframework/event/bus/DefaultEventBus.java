@@ -8,11 +8,10 @@
  */
 package org.antframework.event.bus;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.antframework.event.listener.DataType;
+import org.antframework.event.listener.DataTypes;
 import org.antframework.event.listener.Listener;
-import org.antframework.event.listener.ListenerType;
-import org.antframework.event.listener.ListenerTypes;
 import org.antframework.event.listener.PriorityType;
 import org.springframework.util.Assert;
 
@@ -23,17 +22,21 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 public class DefaultEventBus implements EventBus {
-    // 监听器类型
-    @Getter
-    private final Class<? extends ListenerType> listenerType;
+    // 数据类型
+    private final Class<? extends DataType> dataType;
     // 监听器集合
     private final Set<Listener> listeners = new HashSet<>();
     // 分发器
     private Dispatcher dispatcher = new Dispatcher();
 
     @Override
+    public Class<? extends DataType> getDataType() {
+        return dataType;
+    }
+
+    @Override
     public synchronized void addListener(Listener listener) {
-        Assert.isTrue(listener.getType() == listenerType, String.format("监听器类型[%s]与事件总线接受类型[%s]不匹配", listener.getType(), listenerType));
+        Assert.isTrue(listener.getDataType() == dataType, String.format("监听器的数据类型[%s]与事件总线接受类型[%s]不匹配", listener.getDataType(), dataType));
         if (!listeners.contains(listener)) {
             listeners.add(listener);
             dispatcher = dispatcher.addListener(listener);
@@ -43,7 +46,7 @@ public class DefaultEventBus implements EventBus {
 
     @Override
     public synchronized void removeListener(Listener listener) {
-        if (listener.getType() == listenerType && listeners.contains(listener)) {
+        if (listener.getDataType() == dataType && listeners.contains(listener)) {
             listeners.remove(listener);
             dispatcher = dispatcher.removeListener(listener);
         }
@@ -63,7 +66,7 @@ public class DefaultEventBus implements EventBus {
 
         // 分发事件
         void dispatch(Object event) throws Throwable {
-            Object eventType = ListenerTypes.getEventTypeResolver(listenerType).resolve(event);
+            Object eventType = DataTypes.getEventTypeResolver(dataType).resolve(event);
             // 向升序队列分发事件
             doDispatch(asc.get(eventType), event);
             // 向降序队列分发事件

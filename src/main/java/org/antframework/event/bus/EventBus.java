@@ -8,12 +8,20 @@
  */
 package org.antframework.event.bus;
 
+import org.antframework.event.listener.DataType;
 import org.antframework.event.listener.Listener;
 
 /**
  * 事件总线
  */
 public interface EventBus {
+    /**
+     * 获取数据类型
+     *
+     * @return 数据类型
+     */
+    Class<? extends DataType> getDataType();
+
     /**
      * 新增监听器
      *

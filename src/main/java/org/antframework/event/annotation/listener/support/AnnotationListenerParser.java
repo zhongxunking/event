@@ -43,7 +43,7 @@ public final class AnnotationListenerParser {
         // 解析
         Map<Object, ListenExecutor> eventTypeListenExecutors = parseListens(listenerClass);
 
-        return new AnnotationListener(listenerAnnotation.type(), listenerAnnotation.priority(), listener, eventTypeListenExecutors);
+        return new AnnotationListener(listenerAnnotation.dataType(), listenerAnnotation.priority(), listener, eventTypeListenExecutors);
     }
 
     // 解析所有监听方法
