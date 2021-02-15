@@ -59,14 +59,14 @@ public class DefaultEventBus implements EventBus {
 
     @Override
     public void dispatch(Object event) throws Throwable {
-        FilterChain<EventContext> filterChain = filterHub.newFilterChain(EventFilterType.class, context -> {
+        FilterChain<EventFilterContext> filterChain = filterHub.newFilterChain(EventFilterType.class, context -> {
             try {
                 dispatcher.dispatch(context.getEvent());
             } catch (Throwable e) {
                 ExceptionUtils.rethrow(e);
             }
         });
-        filterChain.doFilter(new EventContext(dataType, event));
+        filterChain.doFilter(new EventFilterContext(dataType, event));
     }
 
     // 分发器

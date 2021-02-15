@@ -13,11 +13,11 @@ import lombok.Getter;
 import org.antframework.event.listener.DataType;
 
 /**
- * 事件上下文
+ * 事件过滤器上下文
  */
 @AllArgsConstructor
 @Getter
-public class EventContext {
+public class EventFilterContext {
     // 数据类型
     private final Class<? extends DataType> dataType;
     // 事件
