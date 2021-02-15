@@ -28,6 +28,9 @@ public class ListenerHub {
      */
     public void addListener(Listener listener) {
         dataTypeListenerses.compute(listener.getDataType(), (dataType, listeners) -> {
+            if (listeners != null && listeners.contains(listener)) {
+                return listeners;
+            }
             if (listeners == null) {
                 listeners = new HashSet<>();
             }
