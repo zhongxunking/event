@@ -22,6 +22,15 @@ public class ListenerHub {
     private final Map<Class<? extends DataType>, Set<Listener>> dataTypeListenerses = new ConcurrentHashMap<>();
 
     /**
+     * 获取所有数据类型
+     *
+     * @return 所有数据类型
+     */
+    public Set<Class<? extends DataType>> getDataTypes() {
+        return Collections.unmodifiableSet(new HashSet<>(dataTypeListenerses.keySet()));
+    }
+
+    /**
      * 新增监听器
      *
      * @param listener 监听器
@@ -37,15 +46,6 @@ public class ListenerHub {
             listeners.add(listener);
             return listeners;
         });
-    }
-
-    /**
-     * 获取所有数据类型
-     *
-     * @return 所有数据类型
-     */
-    public Set<Class<? extends DataType>> getDataTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(dataTypeListenerses.keySet()));
     }
 
     /**
