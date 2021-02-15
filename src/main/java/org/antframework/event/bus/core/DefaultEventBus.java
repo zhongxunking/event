@@ -6,13 +6,17 @@
  * 修订记录:
  * @author 钟勋 2016-12-16 01:14 创建
  */
-package org.antframework.event.bus;
+package org.antframework.event.bus.core;
 
 import lombok.RequiredArgsConstructor;
+import org.antframework.event.bus.EventBus;
 import org.antframework.event.listener.DataType;
 import org.antframework.event.listener.DataTypes;
 import org.antframework.event.listener.Listener;
 import org.antframework.event.listener.PriorityType;
+import org.antframework.filter.FilterChain;
+import org.antframework.filter.FilterHub;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -24,6 +28,8 @@ import java.util.*;
 public class DefaultEventBus implements EventBus {
     // 数据类型
     private final Class<? extends DataType> dataType;
+    // 过滤器中心
+    private final FilterHub filterHub;
     // 监听器集合
     private final Set<Listener> listeners = new HashSet<>();
     // 分发器
@@ -41,7 +47,6 @@ public class DefaultEventBus implements EventBus {
             listeners.add(listener);
             dispatcher = dispatcher.addListener(listener);
         }
-
     }
 
     @Override
@@ -54,7 +59,14 @@ public class DefaultEventBus implements EventBus {
 
     @Override
     public void dispatch(Object event) throws Throwable {
-        dispatcher.dispatch(event);
+        FilterChain<EventContext> filterChain = filterHub.newFilterChain(EventFilterType.class, context -> {
+            try {
+                dispatcher.dispatch(context.getEvent());
+            } catch (Throwable e) {
+                ExceptionUtils.rethrow(e);
+            }
+        });
+        filterChain.doFilter(new EventContext(dataType, event));
     }
 
     // 分发器
