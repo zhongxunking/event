@@ -1,4 +1,4 @@
-/* 
+/*
  * 作者：钟勋 (email:zhongxunking@163.com)
  */
 
@@ -24,7 +24,7 @@ public class ClassListenResolver implements ListenResolver {
     public void init(Method listenMethod) {
         // 校验入参
         Class[] parameterTypes = listenMethod.getParameterTypes();
-        Assert.isTrue(parameterTypes.length == 1, String.format("监听方法[%s]必须只有一个入参", listenMethod));
+        Assert.isTrue(parameterTypes.length == 1, String.format("监听方法[%s]必须有且仅有一个入参", listenMethod));
         // 设置事件类型
         eventType = parameterTypes[0];
     }
