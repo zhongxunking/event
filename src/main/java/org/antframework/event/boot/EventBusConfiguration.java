@@ -10,14 +10,13 @@ package org.antframework.event.boot;
 
 import lombok.AllArgsConstructor;
 import org.antframework.event.EventPublisher;
-import org.antframework.event.annotation.listener.Listener;
+import org.antframework.event.annotation.listener.support.AnnotationListenerParser;
+import org.antframework.event.annotation.support.DomainDataType;
 import org.antframework.event.bus.EventBus;
 import org.antframework.event.bus.EventBusHub;
-import org.antframework.event.extension.ListenerType;
-import org.antframework.event.extension.support.DomainListenerType;
-import org.antframework.event.listener.ListenerExecutor;
+import org.antframework.event.listener.DataType;
+import org.antframework.event.listener.Listener;
 import org.antframework.event.listener.ListenerHub;
-import org.antframework.event.listener.ListenerParser;
 import org.antframework.event.publisher.DefaultEventPublisher;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -41,9 +40,9 @@ public class EventBusConfiguration {
     public static final int ORDER = 0;
 
     // 配置领域事件发布器
-    @Bean
+    @Bean(name = "org.antframework.event.EventPublisher")
     public EventPublisher eventPublisher(EventBusHub eventBusHub) {
-        return new DefaultEventPublisher(eventBusHub.getEventBus(DomainListenerType.class));
+        return new DefaultEventPublisher(eventBusHub.getEventBus(DomainDataType.class));
     }
 
     /**
@@ -57,14 +56,21 @@ public class EventBusConfiguration {
 
         @Override
         public void onApplicationEvent(ContextRefreshedEvent event) {
-            // 扫描
-            String[] beanNames = event.getApplicationContext().getBeanNamesForAnnotation(Listener.class);
+            // 扫描Listener
+            String[] beanNames = event.getApplicationContext().getBeanNamesForType(Listener.class);
+            for (String beanName : beanNames) {
+                Listener bean = event.getApplicationContext().getBean(beanName, Listener.class);
+                // 注册
+                listenerHub.addListener(bean);
+            }
+            // 扫描@Listener
+            beanNames = event.getApplicationContext().getBeanNamesForAnnotation(org.antframework.event.annotation.listener.Listener.class);
             for (String beanName : beanNames) {
                 Object bean = event.getApplicationContext().getBean(beanName);
                 // 解析
-                ListenerExecutor listenerExecutor = ListenerParser.parseListener(bean);
+                Listener listener = AnnotationListenerParser.parseListener(bean);
                 // 注册
-                listenerHub.addListener(listenerExecutor);
+                listenerHub.addListener(listener);
             }
         }
     }
@@ -82,11 +88,11 @@ public class EventBusConfiguration {
 
         @Override
         public void onApplicationEvent(ContextRefreshedEvent event) {
-            for (Class<? extends ListenerType> type : listenerHub.getTypes()) {
+            for (Class<? extends DataType> dataType : listenerHub.getDataTypes()) {
                 // 初始化事件总线
-                EventBus eventBus = eventBusHub.getEventBus(type);
-                for (ListenerExecutor listenerExecutor : listenerHub.getListeners(type)) {
-                    eventBus.addListenerExecutor(listenerExecutor);
+                EventBus eventBus = eventBusHub.getEventBus(dataType);
+                for (Listener listener : listenerHub.getListeners(dataType)) {
+                    eventBus.addListener(listener);
                 }
             }
         }

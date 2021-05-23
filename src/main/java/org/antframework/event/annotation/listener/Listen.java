@@ -8,7 +8,6 @@
  */
 package org.antframework.event.annotation.listener;
 
-import org.antframework.event.extension.ListenResolver;
 import org.antframework.event.listener.PriorityType;
 
 import java.lang.annotation.*;

@@ -6,15 +6,14 @@
  * 修订记录:
  * @author 钟勋 2017-09-29 12:41 创建
  */
-package org.antframework.event.extension.support;
+package org.antframework.event.annotation.support;
 
-import org.antframework.event.extension.EventTypeResolver;
-import org.antframework.event.extension.ListenerType;
+import org.antframework.event.listener.DataType;
 
 /**
- * 领域监听器类型
+ * 领域数据类型
  */
-public class DomainListenerType implements ListenerType {
+public class DomainDataType implements DataType {
     @Override
     public EventTypeResolver getResolver() {
         return ClassEventTypeResolver.INSTANCE;

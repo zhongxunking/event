@@ -8,7 +8,7 @@
  */
 package org.antframework.event.annotation.listener;
 
-import org.antframework.event.extension.ListenerType;
+import org.antframework.event.listener.DataType;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
@@ -22,9 +22,9 @@ import java.lang.annotation.*;
 @Component
 public @interface Listener {
     /**
-     * 类型
+     * 数据类型
      */
-    Class<? extends ListenerType> type();
+    Class<? extends DataType> dataType();
 
     /**
      * 优先级

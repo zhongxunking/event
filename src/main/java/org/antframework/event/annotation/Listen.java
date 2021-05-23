@@ -8,7 +8,7 @@
  */
 package org.antframework.event.annotation;
 
-import org.antframework.event.extension.support.ClassListenResolver;
+import org.antframework.event.annotation.support.ClassListenResolver;
 import org.antframework.event.listener.PriorityType;
 import org.springframework.core.annotation.AliasFor;
 

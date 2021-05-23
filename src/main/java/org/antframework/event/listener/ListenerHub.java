@@ -8,8 +8,6 @@
  */
 package org.antframework.event.listener;
 
-import org.antframework.event.extension.ListenerType;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,45 +18,48 @@ import java.util.concurrent.ConcurrentHashMap;
  * 监听器中心
  */
 public class ListenerHub {
-    // 监听器类型-监听器执行器集合map
-    private final Map<Class<? extends ListenerType>, Set<ListenerExecutor>> listenerTypeListenerExecutorses = new ConcurrentHashMap<>();
+    // 数据类型-监听器集合map
+    private final Map<Class<? extends DataType>, Set<Listener>> dataTypeListenerses = new ConcurrentHashMap<>();
+
+    /**
+     * 获取所有数据类型
+     *
+     * @return 所有数据类型
+     */
+    public Set<Class<? extends DataType>> getDataTypes() {
+        return Collections.unmodifiableSet(new HashSet<>(dataTypeListenerses.keySet()));
+    }
 
     /**
      * 新增监听器
      *
-     * @param listenerExecutor 监听器执行器
+     * @param listener 监听器
      */
-    public void addListener(ListenerExecutor listenerExecutor) {
-        listenerTypeListenerExecutorses.compute(listenerExecutor.getType(), (type, listenerExecutors) -> {
-            if (listenerExecutors == null) {
-                listenerExecutors = new HashSet<>();
+    public void addListener(Listener listener) {
+        dataTypeListenerses.compute(listener.getDataType(), (dataType, listeners) -> {
+            if (listeners != null && listeners.contains(listener)) {
+                return listeners;
             }
-            listenerExecutors.add(listenerExecutor);
-            return listenerExecutors;
+            if (listeners == null) {
+                listeners = new HashSet<>();
+            }
+            listeners.add(listener);
+            return listeners;
         });
     }
 
     /**
-     * 获取所有监听器类型
+     * 获取指定数据类型的所有监听器
      *
-     * @return 所有监听器类型
+     * @param dataType 数据类型
+     * @return 指定数据类型的所有监听器
      */
-    public Set<Class<? extends ListenerType>> getTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(listenerTypeListenerExecutorses.keySet()));
-    }
-
-    /**
-     * 获取指定类型的所有监听器
-     *
-     * @param type 类型
-     * @return 指定类型的所有监听器
-     */
-    public Set<ListenerExecutor> getListeners(Class<? extends ListenerType> type) {
-        Set<ListenerExecutor> listenerExecutors = new HashSet<>();
-        listenerTypeListenerExecutorses.computeIfPresent(type, (k, v) -> {
-            listenerExecutors.addAll(v);
+    public Set<Listener> getListeners(Class<? extends DataType> dataType) {
+        Set<Listener> listeners = new HashSet<>();
+        dataTypeListenerses.computeIfPresent(dataType, (k, v) -> {
+            listeners.addAll(v);
             return v;
         });
-        return Collections.unmodifiableSet(listenerExecutors);
+        return Collections.unmodifiableSet(listeners);
     }
 }

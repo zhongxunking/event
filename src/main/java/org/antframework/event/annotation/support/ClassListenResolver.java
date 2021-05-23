@@ -6,9 +6,9 @@
  * 修订记录:
  * @author 钟勋 2017-09-29 11:54 创建
  */
-package org.antframework.event.extension.support;
+package org.antframework.event.annotation.support;
 
-import org.antframework.event.extension.ListenResolver;
+import org.antframework.event.annotation.listener.ListenResolver;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
