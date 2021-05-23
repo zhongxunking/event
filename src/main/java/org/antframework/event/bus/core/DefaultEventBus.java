@@ -1,4 +1,4 @@
-/* 
+/*
  * 作者：钟勋 (email:zhongxunking@163.com)
  */
 
@@ -33,7 +33,7 @@ public class DefaultEventBus implements EventBus {
     // 监听器集合
     private final Set<Listener> listeners = new HashSet<>();
     // 分发器
-    private Dispatcher dispatcher = new Dispatcher();
+    private volatile Dispatcher dispatcher = new Dispatcher();
 
     @Override
     public Class<? extends DataType> getDataType() {
