@@ -1,4 +1,4 @@
-/* 
+/*
  * 作者：钟勋 (email:zhongxunking@163.com)
  */
 
@@ -8,10 +8,7 @@
  */
 package org.antframework.event.listener;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ListenerHub {
     // 数据类型-监听器集合map
-    private final Map<Class<? extends DataType>, Set<Listener>> dataTypeListenerses = new ConcurrentHashMap<>();
+    private final Map<Class<? extends DataType>, List<Listener>> dataTypeListenerses = new ConcurrentHashMap<>();
 
     /**
      * 获取所有数据类型
@@ -27,7 +24,7 @@ public class ListenerHub {
      * @return 所有数据类型
      */
     public Set<Class<? extends DataType>> getDataTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(dataTypeListenerses.keySet()));
+        return Collections.unmodifiableSet(dataTypeListenerses.keySet());
     }
 
     /**
@@ -41,9 +38,33 @@ public class ListenerHub {
                 return listeners;
             }
             if (listeners == null) {
-                listeners = new HashSet<>();
+                listeners = new ArrayList<>(1);
+            } else {
+                List<Listener> newListeners = new ArrayList<>(listeners.size() + 1);
+                newListeners.addAll(listeners);
+                listeners = newListeners;
             }
             listeners.add(listener);
+            listeners.sort(Comparator.comparingInt(Listener::getPriority));
+            return listeners;
+        });
+    }
+
+    /**
+     * 删除监听器
+     *
+     * @param listener 监听器
+     */
+    public void removeListener(Listener listener) {
+        dataTypeListenerses.computeIfPresent(listener.getDataType(), (dataType, listeners) -> {
+            if (!listeners.contains(listener)) {
+                return listeners;
+            }
+            listeners = new ArrayList<>(listeners);
+            listeners.remove(listener);
+            if (listeners.isEmpty()) {
+                listeners = null;
+            }
             return listeners;
         });
     }
@@ -54,12 +75,13 @@ public class ListenerHub {
      * @param dataType 数据类型
      * @return 指定数据类型的所有监听器
      */
-    public Set<Listener> getListeners(Class<? extends DataType> dataType) {
-        Set<Listener> listeners = new HashSet<>();
-        dataTypeListenerses.computeIfPresent(dataType, (k, v) -> {
-            listeners.addAll(v);
-            return v;
-        });
-        return Collections.unmodifiableSet(listeners);
+    public List<Listener> getListeners(Class<? extends DataType> dataType) {
+        List<Listener> listeners = dataTypeListenerses.get(dataType);
+        if (listeners == null) {
+            listeners = Collections.emptyList();
+        } else {
+            listeners = Collections.unmodifiableList(listeners);
+        }
+        return listeners;
     }
 }
