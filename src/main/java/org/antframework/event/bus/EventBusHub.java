@@ -1,4 +1,4 @@
-/* 
+/*
  * 作者：钟勋 (email:zhongxunking@163.com)
  */
 
@@ -14,7 +14,6 @@ import org.antframework.event.listener.DataType;
 import org.antframework.filter.FilterHub;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +34,7 @@ public class EventBusHub {
      * @return 所有数据类型
      */
     public Set<Class<? extends DataType>> getDataTypes() {
-        return Collections.unmodifiableSet(new HashSet<>(dataTypeEventBuses.keySet()));
+        return Collections.unmodifiableSet(dataTypeEventBuses.keySet());
     }
 
     /**
