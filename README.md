@@ -8,7 +8,10 @@
 2. 环境要求
 > * JDK1.8及以上
 
-3. 技术支持
+3. 示例
+> 结合示例看文档会更容易上手：https://github.com/zhongxunking/event-demo
+
+4. 技术支持
 > 欢迎加我微信（zhong_xun_）入群交流。<br/>
 <img src="https://note.youdao.com/yws/api/personal/file/WEB6b849e698db2a635b43eba5bc949ce1c?method=download&shareKey=27623320b5ca82cbf768b61130c81de0" width=150 />
 
