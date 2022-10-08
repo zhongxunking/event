@@ -1,4 +1,4 @@
-/* 
+/*
  * 作者：钟勋 (email:zhongxunking@163.com)
  */
 
@@ -11,7 +11,7 @@ package org.antframework.event.publisher;
 import lombok.AllArgsConstructor;
 import org.antframework.event.EventPublisher;
 import org.antframework.event.bus.EventBus;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.antframework.event.common.Exceptions;
 
 /**
  * 事件发布器的默认实现
@@ -26,7 +26,7 @@ public class DefaultEventPublisher implements EventPublisher {
         try {
             eventBus.dispatch(event);
         } catch (Throwable e) {
-            ExceptionUtils.rethrow(e);
+            Exceptions.rethrow(e);
         }
     }
 }

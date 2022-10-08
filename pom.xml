@@ -27,16 +27,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>org.antframework.filter</groupId>
+            <artifactId>filter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.antframework.filter</groupId>
-            <artifactId>filter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

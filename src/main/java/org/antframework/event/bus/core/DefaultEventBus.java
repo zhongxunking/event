@@ -10,13 +10,13 @@ package org.antframework.event.bus.core;
 
 import lombok.RequiredArgsConstructor;
 import org.antframework.event.bus.EventBus;
+import org.antframework.event.common.Exceptions;
 import org.antframework.event.listener.DataType;
 import org.antframework.event.listener.DataTypes;
 import org.antframework.event.listener.Listener;
 import org.antframework.event.listener.PriorityType;
 import org.antframework.filter.FilterChain;
 import org.antframework.filter.FilterHub;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -63,7 +63,7 @@ public class DefaultEventBus implements EventBus {
             try {
                 dispatcher.dispatch(context.getEvent());
             } catch (Throwable e) {
-                ExceptionUtils.rethrow(e);
+                Exceptions.rethrow(e);
             }
         });
         filterChain.doFilter(new EventFilterContext(dataType, event));
