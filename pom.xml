@@ -9,7 +9,7 @@
 
     <groupId>org.antframework.event</groupId>
     <artifactId>event</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <name>event</name>
     <description>事件总线</description>
